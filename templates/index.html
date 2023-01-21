@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Status
+{% endblock %}
+
+{% block main %}
+
+{% for i in status %}
+  <img alt="marker" class="m" src="../static/marker.jpg" width="3%" />
+
+
+{% endfor %}
+
+<script>
+  let status = JSON.parse('{{ status|tojson }}');
+  // console.log(status)
+  let images = document.getElementsByClassName("m")
+  console.log(typeof images)
+  for (var i = 0; i < images.length; i++) {
+    images[i].style.left = status[i].x + "px"
+    images[i].style.top = status[i].y + "px"
+    images[i].style.visibility = "visible"
+  }
+</script>
+
+<script>
+  // let status = JSON.parse('{{ status|tojson }}');
+  // for (i in status) {
+  //   // clone_marker = document.getElementById("marker")
+  //   marker.style.visibility = "visible"
+  //   var x = status[i].x
+  //   console.log(x)
+  //   var y = status[i].y
+  //   marker.style.left =  x + "px"
+  //   marker.style.top =  y + "px"
+  // }
+
+</script>
+
+{% endblock %}
