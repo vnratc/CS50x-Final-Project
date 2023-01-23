@@ -63,7 +63,8 @@ def register():
             for i in users:
                 if username in i.values():
                     return "username already exists"
-            if not gender or gender != 'male' or gender != 'female':
+            genders = ["male", "female", "other"]
+            if not gender in genders:
                 return "gender required or its invalid"
             if not username:
                 return "username required"
@@ -78,7 +79,6 @@ def register():
                 hash = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
                 db.execute("INSERT INTO users (username, hash, gender) VALUES(?, ?, ?)", username, hash, gender)
                 session["user_id"] = db.execute("SELECT id FROM users WHERE username IS ?", username)[0]["id"]
-                print(session["user_id"])
                 return redirect("/")
 
 
@@ -171,9 +171,7 @@ def submit():
         # dt_db += ':' + dt[17:]
         dt_db += ':00'
     elif not dt_form:
-        print("datetime form empty")
         dt_db = dt
-        print(dt_db)
     x = session["x"]
     y = session["y"]
     if not id:
