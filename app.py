@@ -178,7 +178,7 @@ def submit():
         db.execute("INSERT INTO symptoms (symptom, notes, date_time, x, y, visible, user_id) VALUES(?, ?, ?, ?, ?, ?, ?)", symptom, notes, dt_db, x, y, 1, user_id)
         return redirect("/")
     else:
-        db.execute("UPDATE symptoms SET symptom = ?, notes = ?, date_time = ? WHERE entry_id = ?, user_id = ?", symptom, notes, dt_db, id, user_id)
+        db.execute("UPDATE symptoms SET symptom = ?, notes = ?, date_time = ? WHERE entry_id = ? AND user_id = ?", symptom, notes, dt_db, id, user_id)
         return redirect("/")
 
 
