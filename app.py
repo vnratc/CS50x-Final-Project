@@ -34,6 +34,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
 def login_required(f):
     """
     Decorate routes to require login.
@@ -46,8 +47,6 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
-
-
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -85,35 +84,28 @@ def register():
 @app.route("/logout")
 def logout():
     """Log user out"""
-    # Forget any user_id
     session.clear()
-    # Redirect user to login form
     return redirect("/login")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     session.clear()
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         if not request.form.get("username"):
             return "must provide username"
         elif not request.form.get("password"):
             return "must provide password"
-        # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
-        # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return "invalid username and/or password"
-        # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
-        # Redirect user to home page
         return redirect("/")
-    # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
 
+# Receive and store coordinates from js
 @app.route('/processUserInfo/<string:xy>', methods=['POST'])
 def processUserInfo(xy):
     xy = json.loads(xy)
@@ -132,6 +124,7 @@ def index():
         gender = db.execute("SELECT gender FROM users WHERE id = ?", user_id)[0]["gender"]
         return render_template("index.html", status=status, username=username, gender=gender)
 
+
 @app.route("/delete", methods=["POST"])
 @login_required
 def delete():
@@ -139,6 +132,7 @@ def delete():
     id_del = request.form.get("id_del")
     db.execute("DELETE FROM symptoms WHERE entry_id = ? AND user_id = ?", id_del, user_id)
     return redirect("/")
+
 
 @app.route("/archive", methods=['POST'])
 @login_required
@@ -148,6 +142,7 @@ def archive():
     db.execute("UPDATE symptoms SET visible = ? WHERE entry_id = ? AND user_id = ?", 0, id_a, user_id)
     return redirect("/")
 
+
 @app.route("/activate", methods=['POST'])
 @login_required
 def activate():
@@ -155,6 +150,7 @@ def activate():
     id_act = request.form.get("id_act")
     db.execute("UPDATE symptoms SET visible = ? WHERE entry_id = ? AND user_id = ?", 1, id_act, user_id)
     return redirect("/")
+
 
 @app.route("/submit", methods=["POST"])
 @login_required

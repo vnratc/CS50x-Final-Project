@@ -29,20 +29,16 @@ Status
   <div class="input-group mb-3">
     <div class="input-group mb-3">
       <input autocomplete="off" class="form-control" id="symptom" name="symptom" placeholder="Symptom" required
-      type="text">
+        type="text">
+    </div>
+    <div class="input-group mb-3">
+      <label for="datetime" id="datetime_label">Date and Time</label>
+      <input class="form-control" id="datetime" name="datetime" type="datetime-local">
     </div>
     <div class="input-group mb-3">
       <span class="input-group-text">Notes</span>
       <textarea autocomplete="off" aria-label="With textarea" class="form-control" name="notes" id="notes"></textarea>
       <button class="btn btn-outline-secondary" type="submit" id="button-submit" disabled>Submit</button>
-    </div>
-
-    
-
-    
-    <div class="input-group mb-3">
-        <label for="datetime" id="datetime_label">Date and Time</label>   
-        <input class="form-control" id="datetime" name="datetime" type="datetime-local">
     </div>
 </form>
 
@@ -64,15 +60,11 @@ Status
   <span id="y"></span>
 </div>
 <script type="text/javascript">
-  // var myImg = document.getElementById("image");
   var myImg = document.querySelectorAll(".images")
   for (i = 0; i < myImg.length; i++) {
     myImg[i].onmousedown = GetCoordinates;
   }
-</script>
 
-
-<script>
   // Receive all symptoms from db
   let status = JSON.parse('{{ status|tojson }}');
   // Get hidden marker img from layout and clone it for every entry in db
@@ -84,7 +76,7 @@ Status
     clone.id = id
     // Append clone to div
     document.getElementById("box").appendChild(clone)
-    // Adjust merker's position
+    // Adjust marker's position and make active ones visible
     if (status[i].visible == 1) {
       clone.style.visibility = "visible"
       clone.className = "markers_visible"
@@ -106,7 +98,6 @@ Status
         markers_visible[k].style.border = "0px"
       }
       markers_visible[j].style.border = "#CCCCCC 1px solid"
-      // markers_visible[j].style.padding =  "4px"
       document.getElementById("id").value = status[j].entry_id
       document.getElementById("id_del").value = status[j].entry_id
       document.getElementById("id_a").value = status[j].entry_id

@@ -1,10 +1,13 @@
+h1 {
+    padding: 10px;
+}
+
 .images {
     position: relative;
 }
 
 #datetime_label {
     padding: 10px;
-    px;
 }
 
 
