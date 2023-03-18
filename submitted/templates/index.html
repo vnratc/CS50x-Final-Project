@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Status
+{% endblock %}
+
+{% block main %}
+<div id="box">
+  {% if gender == 'male' %}
+  <img alt="body_picture" class="images" id="image" src="../static/male1.png" width="300px">
+  {% elif gender == 'female' %}
+  <img alt="body_picture" class="images" id="imagef" src="../static/female0.png" width="300px">
+  {% elif gender == 'other' %}
+  <img alt="body_picture" class="images" id="imageo" src="../static/other.jpg" width="300px">
+  {% endif %}
+  <img alt="marker" id="marker" style="border-radius: 50%;position: absolute; visibility: hidden;"
+    src="../static/marker.jpg" />
+  <img alt="marker_red" id="marker_red" style="border-radius: 50%;position: absolute; visibility: hidden;"
+    src="../static/marker_red.jpg" />
+</div>
+<hr>
+<button class="btn btn-secondary display_none" id="hide_history" name="hide_history" onclick="hide_history()"
+  type="button">Hide History</button>
+<button class="btn btn-info" id="history" name="history" onclick="show_history()" type="button">Show
+  History</button>
+<hr>
+<form action="/submit" method="post" id="form">
+  <input class="visibility_hidden" id="id" name="id" placeholder="#" type="number">
+  <div class="input-group mb-3">
+    <div class="input-group mb-3">
+      <input autocomplete="off" class="form-control" id="symptom" name="symptom" placeholder="Symptom" required
+        type="text">
+    </div>
+    <div class="input-group mb-3">
+      <label for="datetime" id="datetime_label">Date and Time</label>
+      <input class="form-control" id="datetime" name="datetime" type="datetime-local">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Notes</span>
+      <textarea autocomplete="off" aria-label="With textarea" class="form-control" name="notes" id="notes"></textarea>
+      <button class="btn btn-outline-secondary" type="submit" id="button-submit" disabled>Submit</button>
+    </div>
+</form>
+
+<form class="form-control no_border" action="/delete" method="post">
+  <input class="visibility_hidden" type="number" id="id_del" name="id_del">
+  <button class="btn btn-danger" style="visibility: hidden;" type="submit" id="button_delete">Delete</button>
+</form>
+<form class="form-control no_border" action="/archive" method="post">
+  <input class="visibility_hidden" type="number" id="id_a" name="id_a">
+  <button class="btn btn-primary" style="visibility: hidden;" type="submit" id="button_archive">Archive</button>
+</form>
+<form class="form-control no_border" action="/activate" method="post">
+  <input class="visibility_hidden" type="number" id="id_act" name="id_act">
+  <button class="btn btn-success" style="visibility: hidden;" type="submit" id="button_activate">Activate</button>
+</form>
+
+<div class="coordinates">
+  <span id="x"></span>
+  <span id="y"></span>
+</div>
+<script type="text/javascript">
+  var myImg = document.querySelectorAll(".images")
+  for (i = 0; i < myImg.length; i++) {
+    myImg[i].onmousedown = GetCoordinates;
+  }
+
+  // Receive all symptoms from db
+  let status = JSON.parse('{{ status|tojson }}');
+  // Get hidden marker img from layout and clone it for every entry in db
+  let i_marker = document.getElementById("marker")
+  for (i in status) {
+    let id = status[i].entry_id // Get id from db
+    let clone = i_marker.cloneNode(false)
+    // Change id of every clone to id from db
+    clone.id = id
+    // Append clone to div
+    document.getElementById("box").appendChild(clone)
+    // Adjust marker's position and make active ones visible
+    if (status[i].visible == 1) {
+      clone.style.visibility = "visible"
+      clone.className = "markers_visible"
+    }
+    else if (status[i].visible == 0) {
+      clone.style.visibility = "hidden"
+      clone.className = "markers_hidden"
+      clone.src = "../static/marker_blue.jpg"
+    }
+    clone.style.left = status[i].x - 10 + "px"  // 10 is the offset to position marker exactly where the click is, because marker is 20x20px
+    clone.style.top = status[i].y - 10 + "px"
+  }
+
+  // Respond to click on a visible marker
+  let markers_visible = document.querySelectorAll('.markers_visible, .markers_hidden')
+  for (let j = 0; j < markers_visible.length; j++) {
+    markers_visible[j].addEventListener('click', function () {
+      for (let k = 0; k < markers_visible.length; k++) {
+        markers_visible[k].style.border = "0px"
+      }
+      markers_visible[j].style.border = "#CCCCCC 1px solid"
+      document.getElementById("id").value = status[j].entry_id
+      document.getElementById("id_del").value = status[j].entry_id
+      document.getElementById("id_a").value = status[j].entry_id
+      document.getElementById("id_act").value = status[j].entry_id
+      document.getElementById("symptom").value = status[j].symptom
+      document.getElementById("datetime").value = status[j].date_time.slice(0, 16)
+      document.getElementById("notes").value = status[j].notes
+      document.getElementById("marker_red").style.visibility = "hidden"
+      document.getElementById("button_delete").style.visibility = "visible"
+      document.getElementById("button_archive").style.visibility = "visible"
+      document.getElementById("button_activate").style.visibility = "visible"
+      document.getElementById("button-submit").disabled = false
+    });
+  }
+
+  // Show history
+  let h = document.getElementById("history")
+  let markers_hidden = document.querySelectorAll('.markers_hidden')
+  function show_history() {
+    document.getElementById("history").style.display = "none"
+    document.getElementById("hide_history").style.display = "inline"
+    for (let k = 0; k < markers_hidden.length; k++) {
+      markers_hidden[k].style.visibility = "visible"
+    }
+  }
+
+  // Hide history
+  function hide_history() {
+    document.getElementById("history").style.display = "inline"
+    document.getElementById("hide_history").style.display = "none"
+    for (let k = 0; k < markers_hidden.length; k++) {
+      markers_hidden[k].style.visibility = "hidden"
+    }
+  }
+</script>
+{% endblock %}
