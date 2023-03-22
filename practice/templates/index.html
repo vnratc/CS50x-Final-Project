@@ -98,17 +98,14 @@ Status
         markers_visible[k].style.border = "0px"
       }
       markers_visible[j].style.border = "#CCCCCC 1px solid"
-      document.getElementById("id").value = status[j].entry_id
-      document.getElementById("id_del").value = status[j].entry_id
-      document.getElementById("id_a").value = status[j].entry_id
-      document.getElementById("id_act").value = status[j].entry_id
+      let els = document.querySelectorAll('#id, #id_del, #id_a, #id_act')
+      for (e of els) {e.value = status[j].entry_id}
       document.getElementById("symptom").value = status[j].symptom
       document.getElementById("datetime").value = status[j].date_time.slice(0, 16)
       document.getElementById("notes").value = status[j].notes
       document.getElementById("marker_red").style.visibility = "hidden"
-      document.getElementById("button_delete").style.visibility = "visible"
-      document.getElementById("button_archive").style.visibility = "visible"
-      document.getElementById("button_activate").style.visibility = "visible"
+      let elsVis = document.querySelectorAll('#button_delete, #button_archive, #button_activate')
+      for (e of elsVis) {e.style.visibility = 'visible'}
       document.getElementById("button-submit").disabled = false
     });
   }

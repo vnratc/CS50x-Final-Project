@@ -30,6 +30,7 @@ function GetCoordinates(e) {
     }
     PosX = PosX - ImgPos[0];
     PosY = PosY - ImgPos[1];
+    
     var marker = document.getElementById('marker_red')
     // Send to flask
     marker.style.visibility = "visible"
@@ -43,20 +44,15 @@ function GetCoordinates(e) {
     request.open('POST', `/processUserInfo/${JSON.stringify(xy)}`)
     request.send()
     // Clear form if clicked empty space
-    document.getElementById("id").value = null
-    document.getElementById("symptom").value = null
-    document.getElementById("datetime").value = null
-    document.getElementById("notes").value = null
+    let fields = document.querySelectorAll('#id, #symptom, #datetime, #notes')
+    for (f of fields) {f.value = null}
     document.getElementById("marker_red").style.visibility = "visible"
-    document.getElementById("button_delete").style.visibility = "hidden"
-    document.getElementById("button_archive").style.visibility = "hidden"
-    document.getElementById("button_activate").style.visibility = "hidden"
+    let elHide = document.querySelectorAll('#button_delete, #button_archive, #button_activate')
+    for (el of elHide) {el.style.visibility = 'hidden'}
     document.getElementById("button-submit").disabled = false
     // Remove highlight from other markers
     let markers_visible = document.querySelectorAll('.markers_visible, .markers_hidden')
-    for (let k = 0; k < markers_visible.length; k++) {
-        markers_visible[k].style.border = "0px"
-    }
+    for (m of markers_visible) (m.style.border = '0px')
 }
 
 
